@@ -1,0 +1,33 @@
+{
+  "manifest_version": 2,
+
+  "name": "Kona: Download All Files",
+  "description": "This extension lets you download all project files from Kona with a single click.",
+  "version": "1.0",
+
+  "permissions": [
+    "storage",
+    "system.storage",
+    "unlimitedStorage",
+    "https://www.kona.com/*",
+    "https://s3.amazonaws.com/*"
+  ],
+  "page_action": {
+    "default_icon": "icon.png",
+    "default_title": "Download all files"
+  },
+  "background": {
+      "scripts": ["background.js"],
+      "persistent": false
+  },
+  "content_scripts": [
+      {
+          "matches": [
+              "https://www.kona.com/*"
+              ],
+          "css": ["kona.css"],
+          "js": ["zip/zip.js", "zip/deflate.js", "zip/inflate.js", "zip/zip-fs.js", "zip/zip-ext.js", "kona.js"],
+          "run_at": "document_idle"
+      }
+  ]
+}
