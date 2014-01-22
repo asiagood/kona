@@ -6,7 +6,6 @@
 
     "version": "1.0",
 
-    "default_locale": "en",
     "description": "This extension lets you download all project files from Kona with a single click.",
     "homepage_url": "https://github.com/vpetrov/kona",
     "icon": {
