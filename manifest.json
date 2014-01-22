@@ -1,33 +1,43 @@
 {
-  "manifest_version": 2,
+    "manifest_version": 2,
 
-  "name": "Kona: Download All Files",
-  "description": "This extension lets you download all project files from Kona with a single click.",
-  "version": "1.0",
+    "name": "Kona: Download All Files",
+    "short_name": "Kona",
 
-  "permissions": [
-    "storage",
-    "system.storage",
-    "unlimitedStorage",
-    "https://www.kona.com/*",
-    "https://s3.amazonaws.com/*"
-  ],
-  "page_action": {
-    "default_icon": "icon.png",
-    "default_title": "Download all files"
-  },
-  "background": {
-      "scripts": ["background.js"],
-      "persistent": false
-  },
-  "content_scripts": [
-      {
-          "matches": [
-              "https://www.kona.com/*"
-              ],
-          "css": ["kona.css"],
-          "js": ["zip/zip.js", "zip/deflate.js", "zip/inflate.js", "zip/zip-fs.js", "zip/zip-ext.js", "kona.js"],
-          "run_at": "document_idle"
-      }
-  ]
+    "version": "1.0",
+
+    "default_locale": "en",
+    "description": "This extension lets you download all project files from Kona with a single click.",
+    "homepage_url": "https://github.com/vpetrov/kona",
+    "icon": {
+        "16": "icon16.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
+    },
+
+    "permissions": [
+        "storage",
+        "system.storage",
+        "unlimitedStorage",
+        "https://www.kona.com/*",
+        "https://s3.amazonaws.com/*"
+    ],
+    "page_action": {
+        "default_icon": "icon48.png",
+        "default_title": "Download all files"
+    },
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.kona.com/*"
+            ],
+            "css": ["kona.css"],
+            "js": ["zip/zip.js", "zip/deflate.js", "zip/inflate.js", "zip/zip-fs.js", "zip/zip-ext.js", "kona.js"],
+            "run_at": "document_idle"
+        }
+    ]
 }
