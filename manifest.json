@@ -4,11 +4,11 @@
     "name": "Kona: Download All Files",
     "short_name": "Kona",
 
-    "version": "1.0",
+    "version": "1.1",
 
-    "description": "This extension lets you download all project files from Kona with a single click.",
+    "description": "Lets you download all project files from Kona with a single click.",
     "homepage_url": "https://github.com/vpetrov/kona",
-    "icon": {
+    "icons": {
         "16": "icon16.png",
         "48": "icon48.png",
         "128": "icon128.png"
