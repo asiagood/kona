@@ -17,5 +17,13 @@ function onMessageReceived(message, sender, sendResponse) {
     }
 }
 
+function onTabUrlChanged(tab_id, change, tab) {
+    console.log('Tab changed, send attach action to tab:', tab_id, 'change:', change);
+    if (change.status === 'complete') {
+        chrome.tabs.sendMessage(tab_id, {action:'attach'});
+    }
+}
+
 // Listen for the content script to send a message to the background page.
 chrome.runtime.onMessage.addListener(onMessageReceived);
+chrome.tabs.onUpdated.addListener(onTabUrlChanged);
