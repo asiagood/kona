@@ -59,3 +59,12 @@
     background-color: rgb(255, 239, 155);
 }
 
+.kona-select-action {
+     background-image: url(kona/images/activity/actionFavorite.png);
+     float: right;
+}
+
+.kona-select-action:hover,.kona-select-action.selected {
+     background-image: url(kona/images/activity/actionFavoriteSelected.png);
+}
+

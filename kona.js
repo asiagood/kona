@@ -14,7 +14,8 @@ var progress_span = [],
     download_link,
     download_message,
     download_message_container,
-    download_message_timer;
+    download_message_timer,
+    filenames = [];
 
 //requests a local filesystem of size 'bytes'
 function getFS(bytes, success, error) {
@@ -96,6 +97,54 @@ function getActiveProjectElement() {
     return result;
 }
 
+function findDownloadableLinks(root) {
+    //find all downloadable files
+    return root.querySelectorAll('a.file_item.attachment_icon_link');
+}
+
+function addSelectAction() {
+    var project = getActiveProjectElement();
+    if (!project) {
+        console.error("KonaJS: Failed to detect which project element is active.");
+        return;
+    }
+
+    //find all downloadable files
+    var links = findDownloadableLinks(project),
+        link,
+        link_parent,
+        activity_container,
+        select_el,
+        i;
+
+    if (!links || !links.length) {
+        console.log("KonaJS: No downloadable links found.");
+        return;
+    }
+
+    for (i = 0; i < links.length; ++i) {
+        link = links[i];
+        console.log("link", link);
+        link_parent = link.parentElement.parentElement;
+        console.log("link_parent", link_parent);
+        activity_container = link_parent.querySelector('.activity_actions');
+        console.log("activity_container", activity_container);
+
+        if (!activity_container) {
+            continue;
+        }
+
+        //<a class="select_action" title="Select"></a>
+        select_el = document.createElement('a');
+        select_el.classList.add("kona-select-action");
+        select_el.setAttribute('title', 'Select');
+        activity_container.appendChild(select_el);
+
+        console.log('Appended ', select_el);
+    }
+
+}
+
 //'Download all' button click handler. Requests a 4GB filesystem and starts
 //downloading all the files.
 function onDownloadAll() {
@@ -106,6 +155,8 @@ function onDownloadAll() {
     }
 
     download_in_progress = true;
+    //reset used filenames
+    filenames = [];
 
     var project = getActiveProjectElement();
 
@@ -114,9 +165,7 @@ function onDownloadAll() {
         return;
     }
 
-    //find all downloadable files
-    var links = project.querySelectorAll('a.file_item.attachment_icon_link');
-
+    var links = findDownloadableLinks(project);
     if (!links || !links.length) {
         console.error('KonaJS: No files to download');
         showMessage("We can't find any files to download.");
@@ -156,6 +205,7 @@ function onDownloadAll() {
 
 //starts downloading a list of links
 function downloadLinks(links, zip_file, success, error) {
+    //addSelectAction(); //TODO: uncomment this
     return _downloadLinks(links, zip_file, 0, success, error);
 }
 
@@ -208,6 +258,45 @@ function preserveExtension(original, newname) {
     return newname;
 }
 
+function ensureUniqueFilename(file_name) {
+
+    if (filenames.indexOf(file_name) >= 0) {
+        var parts = file_name.split("."),
+            name = "",
+            ext = "";
+
+        if (parts && parts.length > 1) {
+            ext = parts.pop();
+            name = parts.join(".")
+        } else {
+            name = file_name
+        }
+
+        console.log("[KonaJS] name=", name,"ext=",ext);
+
+        //find a suitable number
+        var newname, 
+            counter = 1;
+
+        do {
+            newname = name + " (" + counter + ")";
+            if (ext && ext.length) {
+                newname += "." + ext
+            }
+
+            console.log('[KonaJS] Checking filename', newname)
+            counter++;
+        } while (filenames.indexOf(newname) >= 0);
+
+        console.log('[KonaJS] New file name:', newname)
+        file_name = newname;
+    }
+
+    filenames.push(file_name)
+
+    return file_name;
+}
+
 //Calls the actual 'download' method that fetches the data from the server.
 //When the data are ready, it is added to the zip file.
 //The progress function relies on the download progress to already be at 50%,
@@ -227,6 +316,7 @@ function downloadLink(link, zip_file, success, error) {
 
             //attempt to preserve the original file extension, since users can name files arbitrarily
             file_name = preserveExtension(fallback_filename, file_name);
+            file_name = ensureUniqueFilename(file_name)
 
             console.log('KonaJS: Adding', file_name);
             //add data to zip as 'file_name'
